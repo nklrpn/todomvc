@@ -10,7 +10,7 @@ $twig = new Twig_Environment($twig_loader, [
     /*'cache' => __DIR__ . '/../cache'*/
 ]);
 
-$template = $twig->load('index.twig');
+/*$template = $twig->load('index.twig');
 echo $template->render([
     'todos' => [
         [
@@ -29,4 +29,6 @@ echo $template->render([
             'is_completed' => false,
         ],
     ],
-]);
+]);*/
+
+$controller = new App\Controller\Controller($twig);
