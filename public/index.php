@@ -1,4 +1,4 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-require __DIR__ . '/../templates/index.html';
+require __DIR__ . '/../app/bootstrap.php';

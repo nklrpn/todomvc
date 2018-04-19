@@ -1,0 +1,10 @@
+{% for todo in todos %}
+<li class="{{ todo.is_completed ? 'completed' : '' }}" data-id={{ todo.id }}>
+    <div class="view">
+        <input class="toggle" type="checkbox" {{ todo.is_completed ? "checked" : "" }}>
+        <label>{{ todo.text }}</label>
+        <button class="destroy"></button>
+    </div>
+    <input class="edit" value="{{ todo.text }}">
+</li>
+{% endfor %}
