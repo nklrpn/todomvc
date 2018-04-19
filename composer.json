@@ -1,0 +1,12 @@
+{
+    "name": "nklrpn/todomvc",
+    "description": "TodoMVC",
+    "type": "project",
+    "authors": [
+        {
+            "name": "nklrpn",
+            "email": "mail@nklrpn.ru"
+        }
+    ],
+    "require": {}
+}
