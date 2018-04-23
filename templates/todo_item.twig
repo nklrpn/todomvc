@@ -1,10 +1,10 @@
 {% for todo in todos %}
-<li class="{{ todo.is_completed ? 'completed' : '' }}" data-id={{ todo.id }}>
+<li class="{% if not todo.flag_active %}completed{% endif %}" data-id={{ todo.id }}>
     <div class="view">
-        <input class="toggle" type="checkbox" {{ todo.is_completed ? "checked" : "" }}>
-        <label>{{ todo.text }}</label>
+        <input class="toggle" type="checkbox" {% if not todo.flag_active %}checked{% endif %}>
+        <label>{{ todo.text|e }}</label>
         <button class="destroy"></button>
     </div>
-    <input class="edit" value="{{ todo.text }}">
+    <input class="edit" value="{{ todo.text|e }}">
 </li>
 {% endfor %}

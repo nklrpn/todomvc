@@ -1,13 +1,25 @@
 <?php
 namespace App\Controller;
 
+use App\Storage\StorageInterface;
+
 class Controller
 {
     protected $twig;
+    
+    /**
+     * @var StorageInterface $storage
+     */
+    protected $storage;
 
-    public function __construct($twig)
+    /**
+     * @param $twig
+     * @param StorageInterface $storage
+     */
+    public function __construct($twig, StorageInterface $storage)
     {
         $this->twig = $twig;
+        $this->storage = $storage;
     }
 
     /**
