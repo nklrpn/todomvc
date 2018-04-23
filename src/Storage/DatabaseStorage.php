@@ -87,7 +87,7 @@ class DatabaseStorage implements StorageInterface
             );
         }
 
-        $todo->setState();
+        $todo->setFlagActive();
         $this->em->flush();
     }
 

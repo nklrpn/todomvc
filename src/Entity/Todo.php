@@ -70,7 +70,6 @@ class Todo
      */
     public function setFlagActive()
     {
-        $isFlagActive = $this->getState();
-        $this->flagActive = !$isFlagActive;
+        $this->flagActive = !$this->flagActive;
     }
 }
