@@ -60,7 +60,7 @@ class Todo
     /**
      * @return bool
      */
-    public function getState()
+    public function getFlagActive()
     {
         return $this->flagActive;
     }
@@ -68,7 +68,7 @@ class Todo
     /**
      * @return void
      */
-    public function setState()
+    public function setFlagActive()
     {
         $isFlagActive = $this->getState();
         $this->flagActive = !$isFlagActive;
