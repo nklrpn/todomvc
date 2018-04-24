@@ -19,18 +19,29 @@ $(function() {
 		},
 		render: function(e) {
 			View.show();
-			this.renderFooter();
+			App.renderFooter();
 		},
 		renderFooter: function() {
-			var todosCount = Control.getActiveTodos().length;
-			$('.todo-count-val').text(todosCount);
-
-			var todosCompleted = Control.getCompletedTodos().length;
-			$(".clear-completed").addClass("hidden");
-			if (todosCompleted) {
-				$(".clear-completed").removeClass("hidden");
-			}
+			View.showCounter();
+			View.clearCompletedLink();
 		},
+	};
+
+	var Data = {
+		getData: function() {
+			var todos = $(".todo-list li");
+			return todos;
+		},
+		getActiveTodos: function() {
+			return this.getData().filter(":not('.completed')");
+		},
+		getCompletedTodos: function() {
+			return this.getData().filter(".completed");
+		},
+		getCount: function() {
+			var count = Data.getActiveTodos().length;
+			return count;
+		}
 	};
 
 	var Control = {
@@ -42,6 +53,11 @@ $(function() {
 			}
 
 			var url = '/add/text/' + val;
+
+			if (!val) {
+				return;
+			}
+			
 			$.ajax({
 				type: 'GET',
 				url: url,
@@ -53,13 +69,35 @@ $(function() {
 			});
 		},
 		clear: function() {
-			var completedTodos = this.getCompletedTodos();
-			completedTodos.remove();
+			var completedTodos = Data.getCompletedTodos();
+
+			completedTodos.each(function(index) {
+				var id = $(this).data('id');
+				var url = '/destroy/id/' + id;
+
+				if (!id) {
+					return;
+				}
+
+				$.ajax({
+					type: 'GET',
+					url: url,
+					success: function(data) {
+						$(id).remove();
+						App.render();
+					}
+				});
+			});
 		},
 		toggle: function(e) {
 			var item = $(e.target).closest("li");
+			var id = item.data('id');
+			var url = '/toggle_state/id/' + id;
 			
-			var url = '/toggle_state/id/' + item.data('id');
+			if (!id) {
+				return true;
+			}
+
 			$.ajax({
 				type: 'GET',
 				url: url,
@@ -70,18 +108,34 @@ $(function() {
 		},
 		toggleAll: function(e) {
 			var isChecked = $(e.target).prop("checked");
-			var todos = this.getData();
+			var todos = Data.getData();
 
-			todos.each(function(todo) {
+			todos.each(function(index) {
 				if (isChecked) {
+					var isSkipped = $(this).hasClass("completed");
 					$(this).addClass("completed");
 					$(this).find(".toggle").prop("checked", true);
 				} else {
+					var isSkipped = !$(this).hasClass("completed");
 					$(this).removeClass("completed");
 					$(this).find(".toggle").prop("checked", false);
 				}
+				
+				var id = $(this).data('id');
+				var url = '/toggle_state/id/' + id;
+				
+				if (!id || isSkipped) {
+					return true;
+				}
+
+				$.ajax({
+					type: 'GET',
+					url: url,
+					success: function(data) {
+						App.render();
+					}
+				});
 			});
-			App.render();
 		},
 		edit: function(e) {
 			var item = $(e.target).closest("li");
@@ -91,7 +145,14 @@ $(function() {
 			var item = $(e.target).closest("li");
 
 			if (e.which === 13) {
-				var url = '/edit/id/' + item.data('id') + '/text/' + $(e.target).val();
+				var id = item.data('id');
+				var text = $(e.target).val();
+				var url = '/edit/id/' + id + '/text/' + text;
+
+				if (!id || !text) {
+					return true;
+				}
+
 				$.ajax({
 					type: 'GET',
 					url: url,
@@ -101,18 +162,15 @@ $(function() {
 				});
 			}
 		},
-		getActiveTodos: function() {
-			var todos = this.getData();
-			return todos.filter(":not('.completed')");
-		},
-		getCompletedTodos: function() {
-			var todos = this.getData();
-			return todos.filter(".completed");
-		},
 		destroy: function(e) {
 			var item = $(e.target).closest("li");
+			var id = item.data('id');
+			var url = '/destroy/id/' + id;
 
-			var url = '/destroy/id/' + item.data('id');
+			if (!id) {
+				return true;
+			}
+
 			$.ajax({
 				type: 'GET',
 				url: url,
@@ -120,9 +178,6 @@ $(function() {
 					App.render();
 				}
 			});
-		},
-		getData: function() {
-			return $(".todo-list li");
 		},
 	};
 
@@ -134,31 +189,47 @@ $(function() {
 			return document.URL.substr(document.URL.indexOf('#') + 2); 
 		},
 		show: function() {
+			if (this.getFilter()) {
+				this.showFiltered();
+				return true;
+			}
+
 			$.ajax({
 				type: 'GET',
 				url: '/show',
 				success: function(data) {
 					$('.todo-list').html(data);
-					var todos = $(".todo-list li");
+					App.renderFooter();
 				}
 			});
 		},
 		showFiltered: function(e) {
 			var el = e ? $(e.target) : '';
 			var filter = (el && el.data('filter')) ? el.data('filter') : this.getFilter();
-			var todos = Control.getData();
-
+			var todos = Data.getData();
+			
 			switch (filter) {
 				case 'active':
-					$(todos).hide();
-					$(Control.getActiveTodos()).show();
+					$(todos).show();
+					$(Data.getCompletedTodos()).hide();
 					break;
 				case 'completed':
-					$(todos).hide();
-					$(Control.getCompletedTodos()).show();
+					$(todos).show();
+					$(Data.getActiveTodos()).hide();
 					break;
 				default:
 					$(todos).show();
+			}
+		},
+		showCounter: function() {
+			$('.todo-count-val').text(Data.getCount());
+		},
+		clearCompletedLink: function() {
+			var todosCompleted = Data.getCompletedTodos().length;
+
+			$(".clear-completed").addClass("hidden");
+			if (todosCompleted) {
+				$(".clear-completed").removeClass("hidden");
 			}
 		},
 	};
