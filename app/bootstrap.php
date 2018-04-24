@@ -1,5 +1,10 @@
 <?php
 /**
+ * SESSION
+ */
+$session = new App\Controller\SessionController();
+
+/**
  * Configuration
  */
 $dotenv = new Dotenv\Dotenv(__DIR__ . '/..');
@@ -38,6 +43,15 @@ $storage = new App\Storage\DatabaseStorage($entityManager);
  * Controller
  */
 $controller = new App\Controller\StorageController($twig, $storage);
+
+/**
+ * Auth
+ */
+$auth = new App\Controller\AuthController(
+    $twig, 
+    new App\Storage\AuthStorage($entityManager),
+    $session
+);
 
 /**
  * Router

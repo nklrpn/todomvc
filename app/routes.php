@@ -2,11 +2,14 @@
 $routeParams = $router->resolve();
 
 $id = (!empty($routeParams['params']['id'])) ? 
-    $routeParams['params']['id'] :
-    '';
+    $routeParams['params']['id'] : '';
 $text = (!empty($routeParams['params']['text'])) ? 
-    $routeParams['params']['text'] :
-    '';
+    $routeParams['params']['text'] : '';
+
+$username = (!empty($routeParams['params']['username'])) ? 
+    $routeParams['params']['username'] : '';
+$password = (!empty($routeParams['params']['password'])) ? 
+    $routeParams['params']['password'] : '';
 
 switch ($routeParams['route']) {
     case 'add':
@@ -26,12 +29,39 @@ switch ($routeParams['route']) {
         $controller->render('todo_item.twig', ['todos' => $todos]);
         break;
     case 'login':
-        $controller->render('login.twig', []);
+        if ($username && $password) {
+            $login = $auth->login($username, $password);
+        }
+        
+        if (!empty($login['user_id'])) {
+            header('Location: /', true);
+        }
+
+        $params = (!empty($login['errors'])) ? ['errors' => $login['errors']] : [];        
+        $controller->render('login.twig', $params);
         break;
     case 'register':
-        $controller->render('register.twig', []);
+        if ($username && $password) {
+            $register = $auth->register($username, $password);
+        }
+        
+        if (!empty($register['user_id'])) {
+            header('Location: /', true);
+        }
+        
+        $params = (!empty($login['errors'])) ? ['errors' => $login['errors']] : [];
+        $controller->render('register.twig', $params);
+        break;
+    case 'logout':
+        $auth->logout();
+        header('Location: /', true);
         break;
     default:
+        $username = ($auth->isLogged()) ? $session->getUsername() : '';
+        
         $todos = $controller->getTodos();
-        $controller->render('todo_list.twig', ['todos' => $todos]);
+        $controller->render('todo_list.twig', [
+            'username' => $username,
+            'todos' => $todos
+        ]);
 }

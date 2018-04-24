@@ -64,7 +64,6 @@ $(function() {
 				success: function(data) {
 					$(e.target).val('');
 					App.render();
-
 				}
 			});
 		},
