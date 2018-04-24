@@ -34,8 +34,7 @@ class DatabaseStorage implements StorageInterface
      */
     public function getTodos()
     {
-        $todos = $this->repository->findAll();
-        return $todos;
+        return $this->repository->findAll();
     }
 
     /**
@@ -45,12 +44,18 @@ class DatabaseStorage implements StorageInterface
      */
     public function addTodo($text)
     {
+        if (!$text) {
+            throw new \Exception(
+                'Empty todo'
+            );
+        }
+
         $this->obj->setText($text);
 
         $this->em->persist($this->obj);
         $this->em->flush();
 
-        return $todo->getId();
+        return $this->obj->getId();
     }
 
     /**
@@ -63,7 +68,7 @@ class DatabaseStorage implements StorageInterface
         $todo = $this->repository->findOneById($id);
         
         if (!$todo) {
-            throw $this->createNotFoundException(
+            throw new \Exception(
                 'No todo found for id ' . $id
             );
         }
@@ -82,7 +87,7 @@ class DatabaseStorage implements StorageInterface
         $todo = $this->repository->findOneById($id);
 
         if (!$todo) {
-            throw $this->createNotFoundException(
+            throw new \Exception(
                 'No todo found for id ' . $id
             );
         }
@@ -102,7 +107,7 @@ class DatabaseStorage implements StorageInterface
         $todo = $this->repository->findOneById($id);
 
         if (!$todo) {
-            throw $this->createNotFoundException(
+            throw new \Exception(
                 'No todo found for id ' . $id
             );
         }
