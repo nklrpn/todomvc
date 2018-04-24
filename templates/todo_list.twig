@@ -1,0 +1,52 @@
+{% extends "base.twig" %}
+
+{% block header %}
+<header class="header">
+	{% if session.username %}
+	{{ session.username }}
+	{% else %}
+	<a href="/register">Register</a>
+	<a href="/login">Log in</a>
+	{% endif %}
+</header>
+{% endblock header %}
+
+{% block main %}
+<section class="todoapp">
+	<header class="header">
+		<h1>todos</h1>
+		<input id="new-todo" class="new-todo" placeholder="What needs to be done?" autofocus>
+	</header>
+	<!-- This section should be hidden by default and shown when there are todos -->
+	<section class="main">
+		<input id="toggle-all" class="toggle-all" type="checkbox">
+		<label for="toggle-all">Mark all as complete</label>
+		<ul class="todo-list">
+			{{ include('todo_item.twig') }}
+		</ul>
+	</section>
+	<!-- This footer should hidden by default and shown when there are todos -->
+	<footer class="footer">
+		<!-- This should be `0 items left` by default -->
+		<span class="todo-count"><strong><span class="todo-count-val">0</span></strong> item left</span>
+		<!-- Remove this if you don't implement routing -->
+		<ul class="filters">
+			<li>
+				<a class="selected" href="#/" data-filter="all">All</a>
+			</li>
+			<li>
+				<a href="#/active" data-filter="active">Active</a>
+			</li>
+			<li>
+				<a href="#/completed" data-filter="completed">Completed</a>
+			</li>
+		</ul>
+		<!-- Hidden if no completed items are left ↓ -->
+		<button class="clear-completed">Clear completed</button>
+	</footer>
+</section>
+{% endblock main %}
+
+{% block scripts %}
+<script src="js/app.js"></script>
+{% endblock scripts %}

@@ -1,8 +1,39 @@
-/*
-
-app-template.css overrides
-
-remove this comment if used
-remove this file if not
-
-*/
+/** HEADER **/
+header a {
+    text-decoration: none;
+}
+header a+a {
+    margin-left: 1em;
+}
+/** FORM **/
+.form {
+    margin: 1em 0;
+}
+.form-group {
+    margin-bottom: 1em;
+}
+.form-group label {
+    width: 5em;
+    display: inline-block;
+    padding-top: 0.5em;
+    text-align: right;
+}
+.form-control {
+    padding: 0.4em;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+}
+.btn {
+    padding: 0.5em 1em;
+    border: 1px solid #bbb;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px #ccc;
+}
+/** ERROR **/
+.error-item {
+    padding: 0.5em;
+    color: #c62829;
+    background: #f5e5e5;
+    border: 1px solid #c62829;
+    border-radius: 3px;
+}

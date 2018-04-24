@@ -1,0 +1,37 @@
+{% extends "base.twig" %}
+
+{% block header %}
+<header class="header">
+	<a href="/">Todo List</a>
+	<a href="/register">Register</a>
+</header>
+{% endblock header %}
+
+{% block main %}
+<section class="login">
+    <header class="header">
+        <h1>Log in</h1>
+    </header>
+    <hr>
+    <section class="error">
+    {% for error in errors %}
+        <p class="error-item">{{ error }}</p>
+    {% endfor %}
+    </section>
+    <section class="main">
+        <form class="form" action="/login" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input id="username" class="form-control" type="text" value="{{ username }}" autofocus>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input id="password" class="form-control" type="password">
+            </div>
+            <input type="hidden" value="{{ uniqid }}">
+            <hr>
+            <input type="submit" class="btn btn-default" value="Login">
+        </form>
+    </section>
+</section>
+{% endblock main %}

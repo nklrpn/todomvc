@@ -25,7 +25,13 @@ switch ($routeParams['route']) {
         $todos = $controller->getTodos();
         $controller->render('todo_item.twig', ['todos' => $todos]);
         break;
+    case 'login':
+        $controller->render('login.twig', []);
+        break;
+    case 'register':
+        $controller->render('register.twig', []);
+        break;
     default:
         $todos = $controller->getTodos();
-        $controller->render('index.twig', ['todos' => $todos]);
+        $controller->render('todo_list.twig', ['todos' => $todos]);
 }
