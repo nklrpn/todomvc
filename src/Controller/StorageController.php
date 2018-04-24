@@ -38,10 +38,6 @@ class StorageController extends Controller
      */
     public function addTodo($text) 
     {
-        if (!$text) {
-            throw new \Exception('Missing value!');
-        }
-
         $this->storage->addTodo($text);
     }
 
@@ -52,10 +48,6 @@ class StorageController extends Controller
      */
     public function destroyTodo($id)
     {
-        if (!$id) {
-            throw new \Exception('Missing id!');
-        }
-
         $this->storage->destroyTodo($id);
     }
 
@@ -66,10 +58,6 @@ class StorageController extends Controller
      */
     public function toggleState($id)
     {
-        if (!$id) {
-            throw new \Exception('Missing id!');
-        }
-       
         $this->storage->toggleState($id);
     }
 
@@ -81,13 +69,6 @@ class StorageController extends Controller
      */
     public function editTodo($id, $text)
     {
-        if (!$id) {
-            throw new \Exception('Missing id!');
-        }
-        if (!$text) {
-            throw new \Exception('Missing value!');
-        }
-        
         $this->storage->editTodo($id, $text);
     }
 }

@@ -40,14 +40,12 @@ class DatabaseStorage implements StorageInterface
     /**
      * Add new todo
      * @param string $text
-     * @return void
+     * @return int
      */
     public function addTodo($text)
     {
         if (!$text) {
-            throw new \Exception(
-                'Empty todo'
-            );
+            throw new \Exception('Empty todo');
         }
 
         $this->obj->setText($text);
@@ -60,17 +58,19 @@ class DatabaseStorage implements StorageInterface
 
     /**
      * Destroy todo
-     * @param string $id
+     * @param int $id
      * @return void
      */
     public function destroyTodo($id)
     {
+        if (!$id) {
+            throw new \Exception('Missing id!');
+        }
+        
         $todo = $this->repository->findOneById($id);
         
         if (!$todo) {
-            throw new \Exception(
-                'No todo found for id ' . $id
-            );
+            throw new \Exception('No todo found for id ' . $id);
         }
 
         $this->em->remove($todo);
@@ -79,17 +79,19 @@ class DatabaseStorage implements StorageInterface
 
     /**
      * Toggle todo state: active or completed
-     * @param string $id
+     * @param int $id
      * @return void
      */
     public function toggleState($id)
     {
+        if (!$id) {
+            throw new \Exception('Missing id!');
+        }
+        
         $todo = $this->repository->findOneById($id);
 
         if (!$todo) {
-            throw new \Exception(
-                'No todo found for id ' . $id
-            );
+            throw new \Exception('No todo found for id ' . $id);
         }
 
         $todo->setFlagActive();
@@ -98,18 +100,23 @@ class DatabaseStorage implements StorageInterface
 
     /**
      * Edit todo
-     * @param string $id
+     * @param int $id
      * @param string $text
      * @return void
      */
     public function editTodo($id, $text)
     {
+        if (!$id) {
+            throw new \Exception('Missing id!');
+        }
+        if (!$text) {
+            throw new \Exception('Missing value!');
+        }
+        
         $todo = $this->repository->findOneById($id);
 
         if (!$todo) {
-            throw new \Exception(
-                'No todo found for id ' . $id
-            );
+            throw new \Exception('No todo found for id ' . $id);
         }
 
         $todo->setText($text);
