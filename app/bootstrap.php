@@ -1,10 +1,5 @@
 <?php
 /**
- * SESSION
- */
-$session = new App\Controller\SessionController();
-
-/**
  * Configuration
  */
 $dotenv = new Dotenv\Dotenv(__DIR__ . '/..');
@@ -48,8 +43,7 @@ $controller = new App\Controller\StorageController($twig, $storage);
  * Auth
  */
 $auth = new App\Controller\AuthController(
-    new App\Storage\AuthStorage($entityManager),
-    $session
+    new App\Storage\AuthStorage($entityManager)
 );
 
 /**
