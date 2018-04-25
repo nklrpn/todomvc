@@ -17,5 +17,8 @@
         "psr-4": {
             "App\\": "src/"
         }
+    },
+    "require-dev": {
+        "laravel/homestead": "^7.4"
     }
 }

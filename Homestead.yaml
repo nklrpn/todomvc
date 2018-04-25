@@ -1,0 +1,19 @@
+ip: 192.168.56.100
+memory: 2048
+cpus: 1
+provider: virtualbox
+authorize: ~/.ssh/id_rsa.pub
+keys:
+    - ~/.ssh/id_rsa
+folders:
+    -
+        map: 'd:\projects\drom\todomvc\'
+        to: /home/vagrant/todomvc
+sites:
+    -
+        map: todomvc.test
+        to: /home/vagrant/todomvc/public
+databases:
+    - todomvc
+name: todomvc
+hostname: todomvc
