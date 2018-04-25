@@ -79,11 +79,11 @@ class AuthStorage
 
         $isUsernameStored = $this->isUsernameStored($username);
         
-        if (count($isUsernameStored['errors'])) {
+        if (isset($isUsernameStored['errors']) && count($isUsernameStored['errors'])) {
             array_merge($errors, $isUsernameStored['errors']);
         }
         if ($isUsernameStored) {
-            $errors[] = 'Username <' . $username . ' already exists!';
+            $errors[] = 'Username <' . $username . '> already exists!';
         }
         
         if (count($errors)) {
