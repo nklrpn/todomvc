@@ -6,20 +6,17 @@ use App\Storage\AuthStorage;
 class AuthController extends Controller
 {
     /**
-     * @var AuthStorage $storage
+     * @var AuthStorage
      */
     protected $storage;
 
-    protected $session;
-
     /**
      * @param AuthStorage $storage
-     * @param SessionController $session
      */
-    public function __construct(AuthStorage $storage, SessionController $session)
+    public function __construct(AuthStorage $storage)
     {
         $this->storage = $storage;
-        $this->session = $session;
+        session_start();
     }
 
     /**
@@ -45,6 +42,9 @@ class AuthController extends Controller
                 'errors' => $register['errors'],
             ];
         }
+        
+        $_SESSION['user_id'] = $register['user_id'];
+        $_SESSION['username'] = $username;
 
         return [
             'user_id' => $register['user_id'],
@@ -65,9 +65,9 @@ class AuthController extends Controller
                 'errors' => $login['errors'],
             ];
         }
-        
-        $this->session->setUsername($username);
-        $this->session->setUserId($login['user_id']);
+
+        $_SESSION['user_id'] = $login['user_id'];
+        $_SESSION['username'] = $username;
         
         return [
             'user_id' => $login['user_id'],
@@ -79,7 +79,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        unset($this->session);
+        session_destroy();
     }
 
     /**
@@ -87,10 +87,6 @@ class AuthController extends Controller
      */
     public function isLogged()
     {
-        var_dump([
-            __METHOD__ => session_status(),
-            $this->session->isLogged(),
-        ]);
-        return isset($this->session) && $this->session->getUserId();
+        return isset($_SESSION['user_id']);
     }
 }

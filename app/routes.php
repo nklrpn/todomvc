@@ -1,67 +1,74 @@
 <?php
 $routeParams = $router->resolve();
 
-$id = (!empty($routeParams['params']['id'])) ? 
-    $routeParams['params']['id'] : '';
-$text = (!empty($routeParams['params']['text'])) ? 
-    $routeParams['params']['text'] : '';
+$todo = [
+    'id' => (!empty($routeParams['params']['id'])) ? filter_var($routeParams['params']['id'], FILTER_SANITIZE_NUMBER_INT) : '',
+    'text' => (!empty($routeParams['params']['text'])) ? filter_var($routeParams['params']['text'], FILTER_SANITIZE_SPECIAL_CHARS) : '',
+];
 
-$username = (!empty($routeParams['params']['username'])) ? 
-    $routeParams['params']['username'] : '';
-$password = (!empty($routeParams['params']['password'])) ? 
-    $routeParams['params']['password'] : '';
+$user = [
+    'isSubmitted' => isset($_POST['submit']),
+    'username' => filter_input(INPUT_POST, 'username'),
+    'password' => filter_input(INPUT_POST, 'password'),
+];
 
 switch ($routeParams['route']) {
     case 'add':
-        $controller->addTodo($text);
+        $controller->addTodo($todo['text']);
         break;
     case 'destroy':
-        $controller->destroyTodo($id);
+        $controller->destroyTodo($todo['id']);
         break;
     case 'toggle_state':
-        $controller->toggleState($id);
+        $controller->toggleState($todo['id']);
         break;
     case 'edit':
-        $controller->editTodo($id, $text);
+        $controller->editTodo($todo['id'], $todo['text']);
         break;
     case 'show':
         $todos = $controller->getTodos();
         $controller->render('todo_item.twig', ['todos' => $todos]);
         break;
-    case 'login':
-        if ($username && $password) {
-            $login = $auth->login($username, $password);
-        }
-        
-        if (!empty($login['user_id'])) {
-            header('Location: /', true);
-        }
-
-        $params = (!empty($login['errors'])) ? ['errors' => $login['errors']] : [];        
-        $controller->render('login.twig', $params);
-        break;
     case 'register':
-        if ($username && $password) {
-            $register = $auth->register($username, $password);
+        if ($auth->isLogged()) {
+            header('Location: /');
         }
-        
+        if ($user['isSubmitted']) {
+            $register = $auth->register($user['username'], $user['password']);
+        }
         if (!empty($register['user_id'])) {
-            header('Location: /', true);
+            $_SESSION['user_id'] = $register['user_id'];
+            $_SESSION['username'] = $user['username'];
+            header('Location: /login');
+            session_write_close();
         }
-        
-        $params = (!empty($login['errors'])) ? ['errors' => $login['errors']] : [];
+        $params = (!empty($register['errors'])) ? ['errors' => $register['errors']] : [];
         $controller->render('register.twig', $params);
+        break;
+    case 'login':
+        if ($auth->isLogged()) {
+            header('Location: /');
+            exit();
+        }
+        if ($user['isSubmitted']) {
+            $login = $auth->login($user['username'], $user['password']);
+        }
+        if (!empty($login['user_id'])) {
+            header('Location: /');
+            exit();
+        }
+        $params = (!empty($login['errors'])) ? ['errors' => $login['errors']] : [];
+        $controller->render('login.twig', $params);
         break;
     case 'logout':
         $auth->logout();
-        header('Location: /', true);
+        header('Location: /');
+        exit();
         break;
     default:
-        $username = ($auth->isLogged()) ? $session->getUsername() : '';
-        
-        $todos = $controller->getTodos();
-        $controller->render('todo_list.twig', [
-            'username' => $username,
-            'todos' => $todos
-        ]);
+        if (!empty($_SESSION['username'])) {
+            $params['username'] = $_SESSION['username'];
+        }
+        $params['todos'] = $controller->getTodos();
+        $controller->render('todo_list.twig', $params);
 }
