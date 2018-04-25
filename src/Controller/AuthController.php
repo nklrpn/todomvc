@@ -5,8 +5,6 @@ use App\Storage\AuthStorage;
 
 class AuthController extends Controller
 {
-    protected $twig;
-    
     /**
      * @var AuthStorage $storage
      */
@@ -15,12 +13,11 @@ class AuthController extends Controller
     protected $session;
 
     /**
-     * @param $twig
      * @param AuthStorage $storage
+     * @param SessionController $session
      */
-    public function __construct($twig, AuthStorage $storage, $session)
+    public function __construct(AuthStorage $storage, SessionController $session)
     {
-        $this->twig = $twig;
         $this->storage = $storage;
         $this->session = $session;
     }
@@ -70,6 +67,7 @@ class AuthController extends Controller
         }
         
         $this->session->setUsername($username);
+        $this->session->setUserId($login['user_id']);
         
         return [
             'user_id' => $login['user_id'],
@@ -89,6 +87,10 @@ class AuthController extends Controller
      */
     public function isLogged()
     {
-        return isset($this->session) && $this->session->getUsername();
+        var_dump([
+            __METHOD__ => session_status(),
+            $this->session->isLogged(),
+        ]);
+        return isset($this->session) && $this->session->getUserId();
     }
 }

@@ -48,7 +48,6 @@ $controller = new App\Controller\StorageController($twig, $storage);
  * Auth
  */
 $auth = new App\Controller\AuthController(
-    $twig, 
     new App\Storage\AuthStorage($entityManager),
     $session
 );
