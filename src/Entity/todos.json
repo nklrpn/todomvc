@@ -1,37 +1,32 @@
-[
-    {
-        "id": "1",
-        "text": "Try Php",
-        "flag_active": false
+{
+    "0": {
+        "id": "20180426100632",
+        "text": "Try jquery",
+        "flagActive": false
     },
-    {
-        "id": "2",
-        "text": "Buy unicorn",
-        "flag_active": true
+    "1": {
+        "id": "20180426100643",
+        "text": "Try php",
+        "flagActive": false
     },
-    {
-        "id": "3",
-        "text": "Try jQuery",
-        "flag_active": false
+    "2": {
+        "id": "20180426100647",
+        "text": "Try ajax",
+        "flagActive": false
     },
-    {
-        "id": "4",
-        "text": "Try Twig",
-        "flag_active": false
+    "5": {
+        "id": "20180426100716",
+        "text": "Buy Unicorn",
+        "flagActive": true
     },
-    {
-        "id": "20180423030054",
-        "text": "Try Doctrine",
-        "flag_active": false
+    "6": {
+        "id": "20180426100746",
+        "text": "Try twig",
+        "flagActive": false
     },
-    {
-        "id": "20180423061035",
-        "text": "script",
-        "flag_active": false
-    },
-    {
-        "id": "20180423061041",
-        "text": "\u003Cscript\u003E",
-        "flag_active": true
+    "7": {
+        "id": "20180426100752",
+        "text": "Try doctrine",
+        "flagActive": true
     }
-]
+}
