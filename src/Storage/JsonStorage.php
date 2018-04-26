@@ -18,7 +18,7 @@ class JsonStorage implements StorageInterface
         $filePath = __DIR__ . '/../../' . getenv('APP_JSONFILE_PATH');
 
         if (!$filePath || !file_exists($filePath)) {
-            throw new \Exception("File not found: {$filePath}");
+            file_put_contents($filePath, '[]');
         }
         
         $json = file_get_contents($filePath);
@@ -28,7 +28,6 @@ class JsonStorage implements StorageInterface
     }
 
     /**
-     * Get todos
      * @return array
      */
     public function getTodos() {
@@ -36,15 +35,18 @@ class JsonStorage implements StorageInterface
     }
 
     /**
-     * Add new todo
      * @param string $text
      * @return void
      */
     public function addTodo($text) {
+        if (!$text) {
+            return;
+        }
+
         $todo = [
             'id' => date('YmdHis'),
             'text' => $text,
-            'flag_active' => (bool) true,
+            'flagActive' => (bool) true,
         ];
 
         array_push($this->todos, $todo);
@@ -53,32 +55,43 @@ class JsonStorage implements StorageInterface
     }
 
     /**
-     * Destroy todo
      * @param string $id
      * @return void
      */
     public function destroyTodo($id) {
-        $newTodos = array_filter($this->todos, function($item) use ($id) {
-            return $item['id'] != $id;
-        });
+        if (!$id) {
+            return;
+        }
 
-        if (count($newTodos) != count($this->todos)) {
-            $this->todos = $newTodos;
+        $isDestroyed = false;
+
+        foreach ($this->todos as $index => $todo) {
+            if ($todo['id'] == $id) {
+                unset($this->todos[$index]);
+                $isDestroyed = true;
+                break;
+            }
+        }
+
+        if ($isDestroyed) {
             $this->store();
         }
     }
 
     /**
-     * Toggle todo state: active or completed
      * @param string $id
      * @return void
      */
     public function toggleState($id) {
+        if (!$id) {
+            return;
+        }
+
         $isToggled = false;
 
         foreach ($this->todos as &$todo) {
             if ($todo['id'] == $id) {
-                $todo['flag_active'] = !$todo['flag_active'];
+                $todo['flagActive'] = !$todo['flagActive'];
                 $isToggled = true;
                 break;
             }
@@ -90,12 +103,15 @@ class JsonStorage implements StorageInterface
     }
 
     /**
-     * Edit todo
      * @param string $id
      * @param string $text
      * @return void
      */
     public function editTodo($id, $text) {
+        if (!$id || !$text) {
+            return;
+        }
+
         $isEdited = false;
 
         foreach ($this->todos as &$todo) {
@@ -112,7 +128,6 @@ class JsonStorage implements StorageInterface
     }
 
     /**
-     * Store todos to file
      * @return void
      */
     private function store()

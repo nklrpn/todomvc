@@ -8,7 +8,7 @@ class StorageController extends Controller
     protected $twig;
     
     /**
-     * @var StorageInterface $storage
+     * @var StorageInterface
      */
     protected $storage;
 
@@ -23,7 +23,6 @@ class StorageController extends Controller
     }
     
     /**
-     * Get todos
      * @return array
      */
     public function getTodos()
@@ -32,7 +31,6 @@ class StorageController extends Controller
     }
 
     /**
-     * Add new todo
      * @param string $text
      * @return void
      */
@@ -42,7 +40,6 @@ class StorageController extends Controller
     }
 
     /**
-     * Destroy todo
      * @param string $id
      * @return void
      */
@@ -52,7 +49,6 @@ class StorageController extends Controller
     }
 
     /**
-     * Toggle todo state: active or completed
      * @param string $id
      * @return void
      */
@@ -62,7 +58,6 @@ class StorageController extends Controller
     }
 
     /**
-     * Edit todo
      * @param string $id
      * @param string $text
      * @return void
