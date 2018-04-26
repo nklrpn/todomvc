@@ -5,9 +5,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity()
- * @ORM\Table(name="todos")
+ * @ORM\Table(name="lists")
  */
-class Todo
+class TodoList
 {
     /**
      * @var int
@@ -21,16 +21,16 @@ class Todo
     /**
      * @var string
      * 
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      */
-    private $text;
+    private $json;
 
     /**
-     * @var bool
+     * @var int
      * 
-     * @ORM\Column(name="flag_active", type="boolean", nullable=true)
+     * @ORM\Column(name="user_id", type="integer", nullable=false, unique=true)
      */
-    private $flagActive = true;
+    private $userId;
 
     /**
      * @return int
@@ -43,33 +43,34 @@ class Todo
     /**
      * @return string
      */
-    public function getText()
+    public function getJson()
     {
-        return $this->text;
+        return $this->json;
     }
 
     /**
-     * @param string $text
+     * @param string $json
      * @return void
      */
-    public function setText($text)
+    public function setJson($json)
     {
-        $this->text = $text;
+        $this->json = $json;
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function getFlagActive()
+    public function getUserId()
     {
-        return $this->flagActive;
+        return $this->userId;
     }
 
     /**
+     * @param int $userId
      * @return void
      */
-    public function setFlagActive()
+    public function setUserId($userId)
     {
-        $this->flagActive = !$this->flagActive;
+        $this->userId = $userId;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace App\Storage;
 
-use App\Entity\Todo;
+use App\Entity\TodoList;
 use Doctrine\ORM\EntityManager;
 
 class DatabaseStorage implements StorageInterface
@@ -11,34 +11,113 @@ class DatabaseStorage implements StorageInterface
      */
     private $em;
 
-    private $repository;
+    private $repo;
 
     /**
-     * @var Todo
+     * @var TodoList
      */
     private $obj;
 
+    /**
+     * @var int
+     */
+    private $userId;
+
+    protected $repoList;
+    
+    /**
+     * @var array
+     */
+    protected $todos = [];
+
+    
     /**
      * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
     {
         $this->em = $entityManager;
-        $this->repository = $entityManager->getRepository('App\Entity\Todo');
-        $this->obj = new Todo();
+        $this->repo = $entityManager->getRepository('App\Entity\TodoList');
+        
+        $this->obj = new TodoList();
+
+        $this->userId = $this->getUserId();
+        $this->repoList = $this->getListByUserId();
+
+        if (!$this->repoList) {
+            $this->createList();
+        } else {
+            $this->todos = $this->getTodos();
+        }
+    }
+
+    /** 
+     * @return int
+     */
+    private function getUserId()
+    {
+        if (isset($_SESSION['user_id'])) {
+            return $_SESSION['user_id'];
+        }
+        
+        return;
+    }
+    
+    /**
+     * @return array
+     */
+    private function getListByUserId()
+    {
+        if (!$this->userId) {
+            return;
+        }
+        
+        return $this->repo->findOneBy([
+            'userId' => $this->userId
+        ]);
+    }
+
+    /** 
+     * @return void
+     */
+    private function createList()
+    {
+        if (!$this->repoList) {
+            $this->obj->setJson(json_encode([]));
+            $this->obj->setUserId($this->userId);
+
+            $this->em->persist($this->obj);
+            $this->em->flush();
+        }
+    }
+    
+    /**
+     * @return void
+     */
+    private function updateTodos()
+    {
+        $this->repoList->setJson(json_encode($this->todos));
+
+        $this->em->persist($this->repoList);
+        $this->em->flush();
     }
 
     /**
-     * Get todos
      * @return array
      */
     public function getTodos()
     {
-        return $this->repository->findAll();
+        if (!$this->repoList) {
+            return;
+        }
+        
+        $json = $this->repoList->getJson();
+        $this->todos = json_decode($json, true);
+
+        return $this->todos;
     }
 
     /**
-     * Add new todo
      * @param string $text
      * @return int
      */
@@ -48,16 +127,18 @@ class DatabaseStorage implements StorageInterface
             throw new \Exception('Empty todo');
         }
 
-        $this->obj->setText($text);
+        $todo = [
+            'id' => date('ymdHis'),
+            'text' => $text,
+            'flagActive' => 1,
+        ];
 
-        $this->em->persist($this->obj);
-        $this->em->flush();
+        array_push($this->todos, $todo);
 
-        return $this->obj->getId();
+        $this->updateTodos();
     }
 
     /**
-     * Destroy todo
      * @param int $id
      * @return void
      */
@@ -66,19 +147,23 @@ class DatabaseStorage implements StorageInterface
         if (!$id) {
             throw new \Exception('Missing id!');
         }
+
+        $isDestroyed = false;
         
-        $todo = $this->repository->findOneById($id);
-        
-        if (!$todo) {
-            throw new \Exception('No todo found for id ' . $id);
+        foreach ($this->todos as $index => $todo) {
+            if ($todo['id'] == $id) {
+                unset($this->todos[$index]);
+                $isDestroyed = true;
+                break;
+            }
         }
 
-        $this->em->remove($todo);
-        $this->em->flush();
+        if ($isDestroyed) {
+            $this->updateTodos();
+        }
     }
 
     /**
-     * Toggle todo state: active or completed
      * @param int $id
      * @return void
      */
@@ -88,18 +173,22 @@ class DatabaseStorage implements StorageInterface
             throw new \Exception('Missing id!');
         }
         
-        $todo = $this->repository->findOneById($id);
-
-        if (!$todo) {
-            throw new \Exception('No todo found for id ' . $id);
+        $isToggled = false;
+        
+        foreach ($this->todos as &$todo) {
+            if ($todo['id'] == $id) {
+                $todo['flagActive'] = !$todo['flagActive'];
+                $isToggled = true;
+                break;
+            }
         }
 
-        $todo->setFlagActive();
-        $this->em->flush();
+        if ($isToggled) {
+            $this->updateTodos();
+        }
     }
 
     /**
-     * Edit todo
      * @param int $id
      * @param string $text
      * @return void
@@ -113,13 +202,18 @@ class DatabaseStorage implements StorageInterface
             throw new \Exception('Missing value!');
         }
         
-        $todo = $this->repository->findOneById($id);
+        $isEdited = false;
 
-        if (!$todo) {
-            throw new \Exception('No todo found for id ' . $id);
+        foreach ($this->todos as &$todo) {
+            if ($todo['id'] == $id) {
+                $todo['text'] = $text;
+                $isEdited = true;
+                break;
+            }
         }
 
-        $todo->setText($text);
-        $this->em->flush();
+        if ($isEdited) {
+            $this->updateTodos();
+        }
     }
 }
