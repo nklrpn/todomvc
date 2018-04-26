@@ -7,12 +7,8 @@ Based on [todomvc template](https://github.com/tastejs/todomvc-app-template).
 
 - Clone this repo and use composer to install dependencies.
 
-- Set config params in .env file in root directory.
+- Copy .env.example to .env and set config params.
 
-- Create a database.
+- Create a database than move to app/ directory and run command `..\vendor\bin\doctrine orm:schema-tool:create` to create database tables.
 
-- Open a command shell and move to app/ directory.
-
-- Type the command `..\vendor\bin\doctrine orm:schema-tool:create` to create database tables.
-
-- Run public/index.php. 
+- Run local server `php -S localhost:8080 -t public` or use vagrant.
