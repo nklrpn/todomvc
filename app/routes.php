@@ -38,8 +38,6 @@ switch ($routeParams['route']) {
             $register = $auth->register($user['username'], $user['password']);
         }
         if (!empty($register['user_id'])) {
-            $_SESSION['user_id'] = $register['user_id'];
-            $_SESSION['username'] = $user['username'];
             header('Location: /login');
             exit();
         }
