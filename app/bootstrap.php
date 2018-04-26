@@ -29,22 +29,26 @@ $dbConf = Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration([__DIR
 $entityManager = Doctrine\ORM\EntityManager::create($dbParams, $dbConf);
 
 /**
- * Storage
- */
-//$storage = new App\Storage\JsonStorage();
-$storage = new App\Storage\DatabaseStorage($entityManager);
-
-/**
- * Controller
- */
-$controller = new App\Controller\StorageController($twig, $storage);
-
-/**
  * Auth
  */
 $auth = new App\Controller\AuthController(
     new App\Storage\AuthStorage($entityManager)
 );
+
+/**
+ * Storage
+ */
+if ($auth->isLogged()) {
+    $storage = new App\Storage\DatabaseStorage($entityManager);
+} else {
+    //$storage = new App\Storage\JsonStorage();
+    $storage = new App\Storage\SessionStorage();
+}
+
+/**
+ * Controller
+ */
+$controller = new App\Controller\StorageController($twig, $storage);
 
 /**
  * Router
