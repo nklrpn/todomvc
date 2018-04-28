@@ -19,6 +19,7 @@
         }
     },
     "require-dev": {
-        "laravel/homestead": "^7.4"
+        "laravel/homestead": "^7.4",
+        "phpunit/phpunit": "7.0"
     }
 }
