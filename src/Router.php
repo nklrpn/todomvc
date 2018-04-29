@@ -14,11 +14,12 @@ class Router
     protected $query;
     
     /**
+     * @param string $uri
      * @return array
      */
-    public function resolve()
+    public function resolve($uri = null)
     {
-        $uri = $_SERVER['REQUEST_URI'];
+        $uri = ($uri) ? $uri : $_SERVER['REQUEST_URI'];
         $this->uri = $uri;
 
         return $this->getQuery();
