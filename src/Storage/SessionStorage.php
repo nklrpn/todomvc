@@ -8,6 +8,9 @@ class SessionStorage implements StorageInterface
      */
     protected $todos = [];
 
+    /**
+     * @return void
+     */
     public function __construct()
     {
         if (isset($_SESSION['todos'])) {
@@ -24,31 +27,35 @@ class SessionStorage implements StorageInterface
 
     /**
      * @param string $text
-     * @return void
+     * @return string|bool Todo ID|false
      */
     public function addTodo($text) {
         if (!$text) {
-            return;
+            throw new \InvalidArgumentException('Missing text!');
         }
 
         $todo = [
-            'id' => date('YmdHis'),
+            'id' => date('ymdHis'),
             'text' => $text,
             'flagActive' => (bool) true,
         ];
 
         array_push($this->todos, $todo);
 
-        $this->store();
+        if ($this->store()) {
+            return $todo['id'];
+        }
+
+        return false;
     }
 
     /**
      * @param string $id
-     * @return void
+     * @return bool
      */
     public function destroyTodo($id) {
         if (!$id) {
-            return;
+            throw new \InvalidArgumentException('Missing id!');
         }
 
         $isDestroyed = false;
@@ -62,17 +69,19 @@ class SessionStorage implements StorageInterface
         }
 
         if ($isDestroyed) {
-            $this->store();
+            return $this->store();
         }
+
+        return false;
     }
 
     /**
      * @param string $id
-     * @return void
+     * @return bool
      */
     public function toggleState($id) {
         if (!$id) {
-            return;
+            throw new \InvalidArgumentException('Missing id!');
         }
 
         $isToggled = false;
@@ -86,18 +95,23 @@ class SessionStorage implements StorageInterface
         }
 
         if ($isToggled) {
-            $this->store();
+            return $this->store();
         }
+
+        return false;
     }
 
     /**
      * @param string $id
      * @param string $text
-     * @return void
+     * @return bool
      */
     public function editTodo($id, $text) {
-        if (!$id || !$text) {
-            return;
+        if (!$id) {
+            throw new \InvalidArgumentException('Missing id!');
+        }
+        if (!$text) {
+            throw new \InvalidArgumentException('Missing text!');
         }
 
         $isEdited = false;
@@ -111,17 +125,22 @@ class SessionStorage implements StorageInterface
         }
 
         if ($isEdited) {
-            $this->store();
+            return $this->store();
         }
+
+        return false;
     }
 
     /**
-     * @return void
+     * @return bool
      */
     private function store()
     {
-        if ($this->todos) {
+        if (isset($this->todos) && is_array($this->todos)) {
             $_SESSION['todos'] = json_encode($this->todos);
+            return true;
         }
+
+        return false;
     }
 }

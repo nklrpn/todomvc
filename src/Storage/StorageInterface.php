@@ -12,21 +12,21 @@ interface StorageInterface
     /**
      * Add new todo
      * @param string $text
-     * @return void
+     * @return string|bool Todo ID|false
      */
     public function addTodo($text);
 
     /**
      * Destroy todo
      * @param string $id
-     * @return void
+     * @return bool
      */
     public function destroyTodo($id);
 
     /**
      * Toggle todo state: active or completed
      * @param string $id
-     * @return void
+     * @return bool
      */
     public function toggleState($id);
 
@@ -34,7 +34,7 @@ interface StorageInterface
      * Edit todo
      * @param string $id
      * @param string $text
-     * @return void
+     * @return bool
      */
     public function editTodo($id, $text);
 }
