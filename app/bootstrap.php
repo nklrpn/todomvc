@@ -41,7 +41,6 @@ $auth = new App\Controller\AuthController(
 if ($auth->isLogged()) {
     $storage = new App\Storage\DatabaseStorage($entityManager);
 } else {
-    //$storage = new App\Storage\JsonStorage();
     $storage = new App\Storage\SessionStorage();
 }
 
